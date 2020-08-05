@@ -1,4 +1,5 @@
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import pl.sterniczuk.serwis.CarDetails;
 import pl.sterniczuk.serwis.CarDiagnosticResult;
@@ -9,36 +10,26 @@ import java.util.List;
 
 public class TestNGCarServiceTest {
 
-    @Test
-    public void test(){
+    @Test(dataProvider = "data")
+    public void analyzeCars_dataFromDataProvider_resultFromDataProvider(List<CarDetails> carDetails, List<CarDiagnosticResult> carDiagnosticResults){
 
 
         //given
         CarService carService = new CarService();
-        List<CarDetails> carsDetails = createCarDetailsFirstCase();
 
         //when
-        List<CarDiagnosticResult> results = carService.analyzeCars(carsDetails);
+        List<CarDiagnosticResult> results = carService.analyzeCars(carDetails);
 
         //then
-        List<CarDiagnosticResult>  expcectedResults =createExpectedResaultsFirstCase();
-        Assert.assertEquals(results,expcectedResults);
+        Assert.assertEquals(results, carDiagnosticResults);
     }
 
-    @Test
-    public void test2(){
+    @DataProvider(name="data")
+    private Object[][] data(){
+        return new Object[][]{
+                {createCarDetailsFirstCase(), createExpectedResaultsFirstCase()},
+                {createCarDetailsFalseCase(), createExpectedResultsFalseCase()}};
 
-
-        //given
-        CarService carService = new CarService();
-        List<CarDetails> carsDetails = createCarDetailsFalseCase();
-
-        //when
-        List<CarDiagnosticResult> results = carService.analyzeCars(carsDetails);
-
-        //then
-        List<CarDiagnosticResult>  expcectedResults = createExpectedResultsFalseCase();
-        Assert.assertEquals(results,expcectedResults);
     }
 
     private List<CarDiagnosticResult> createExpectedResaultsFirstCase(){
